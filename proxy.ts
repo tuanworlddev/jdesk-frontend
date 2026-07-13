@@ -17,6 +17,10 @@ function apiOrigin(): string | null {
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
+  // Only force HTTPS upgrades when actually served over HTTPS — otherwise the
+  // browser would upgrade CSS/JS to an https origin that doesn't exist yet
+  // (e.g. when reaching the box over http://<ip> before certbot is set up).
+  const isHttps = request.headers.get("x-forwarded-proto") === "https";
   const connectExtra = [apiOrigin(), isDev ? "ws: wss:" : ""]
     .filter(Boolean)
     .join(" ");
@@ -32,8 +36,7 @@ export function proxy(request: NextRequest) {
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-ancestors 'none';
-    upgrade-insecure-requests;
+    frame-ancestors 'none';${isHttps ? "\n    upgrade-insecure-requests;" : ""}
   `
     .replace(/\s{2,}/g, " ")
     .trim();
