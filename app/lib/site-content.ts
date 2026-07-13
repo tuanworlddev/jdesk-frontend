@@ -142,7 +142,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         '@DesktopCommand("greeting.greet")\n@RequiresCapability("greeting:use")\npublic CompletionStage<Response> greet(Request req, InvocationContext ctx) {\n    return completedFuture(new Response("Hello, " + req.name() + "!"));\n}',
       tsFilename: "ui/src/main.ts",
       tsCode:
-        'import { commands } from "./jdesk-ts/commands";\n\nconst res = await commands.greeting.greet({ name: "Tuan" });',
+        'import { commands } from "./jdesk-ts/commands";\n\nconst res = await commands.greeting.greet({ name: "Ada" });',
     },
     comparison: {
       eyebrow: "How it compares",

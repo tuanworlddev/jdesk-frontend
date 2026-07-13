@@ -153,7 +153,7 @@ export function FeedbackWidget() {
                       required
                       value={form.fullName}
                       onChange={set("fullName")}
-                      placeholder="Tuan Nguyen"
+                      placeholder="Ada Lovelace"
                       className="no-focus-ring w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-faint focus:border-arc/50"
                     />
                   </Field>

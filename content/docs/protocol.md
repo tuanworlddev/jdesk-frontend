@@ -32,7 +32,7 @@ receives an explicit `helloAck` with `ok:false` and code
 
 ```json
 {"v":1, "kind":"invoke", "id":"01J...", "command":"greeting.greet",
- "payload": {"name":"Tuan"}, "nonce":"<hex>"}
+ "payload": {"name":"Ada"}, "nonce":"<hex>"}
 ```
 
 - `id`: 1..128 chars, unique within the navigation session (duplicates fail with
@@ -74,7 +74,7 @@ when `-Djdesk.console.forward=true` is set; otherwise the envelope is dropped.
 ### result (success / failure)
 
 ```json
-{"v":1, "kind":"result", "id":"01J...", "ok":true, "value":{"message":"Hello Tuan"}}
+{"v":1, "kind":"result", "id":"01J...", "ok":true, "value":{"message":"Hello Ada"}}
 {"v":1, "kind":"result", "id":"01J...", "ok":false,
  "error":{"code":"CAPABILITY_DENIED", "message":"Command is not allowed for this window"}}
 {"v":1, "kind":"result", "id":"01J...", "ok":false,

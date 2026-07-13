@@ -113,7 +113,7 @@ imported from `jdesk-client`:
 ```ts
 import { commands } from "./generated/commands";
 
-const response = await commands.greeting.greet({ name: "Tuan" });
+const response = await commands.greeting.greet({ name: "Ada" });
 // response is typed as GreetingServiceResponse: { message: string }
 ```
 
@@ -135,7 +135,7 @@ import { commands } from "./generated/commands";
 import { JDeskError } from "jdesk-client";
 
 try {
-  const { message } = await commands.greeting.greet({ name: "Tuan" });
+  const { message } = await commands.greeting.greet({ name: "Ada" });
   document.querySelector("#result").textContent = message;
 } catch (error) {
   if (error instanceof JDeskError) {

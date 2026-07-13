@@ -148,7 +148,7 @@ anything beyond a first command, switch to the generated typed client:
   ```ts
   import { commands } from "./generated/commands";
 
-  const response = await commands.greeting.greet({ name: "Tuan" });
+  const response = await commands.greeting.greet({ name: "Ada" });
   ```
 
   The handshake, request ids, timeouts, and cancellation are handled for you, and the call

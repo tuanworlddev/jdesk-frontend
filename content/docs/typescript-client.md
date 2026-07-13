@@ -13,7 +13,7 @@ import `invoke` from this package (default output: `ui/src/generated/`).
 ```ts
 import { commands } from "./generated/commands";
 
-const response = await commands.greeting.greet({ name: "Tuan" });
+const response = await commands.greeting.greet({ name: "Ada" });
 ```
 
 Failures reject with `JDeskError`: `code` is a stable machine-readable error code, and
