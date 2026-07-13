@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node scripts/generate-csp.mjs",
-    "preview": "node scripts/serve-static.mjs",
-    "start": "npm run preview",
+    "start": "next start",
     "lint": "eslint --max-warnings=0",
     "typecheck": "tsc --noEmit --pretty false",
     "test": "playwright test",
