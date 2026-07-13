@@ -1,26 +1,326 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Theme is toggled via [data-theme] on <html>; class variant follows it. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ------------------------------------------------------------------ *
+ *  Design tokens — "The Bridge"
+ *  Warm ember = the Java core.  Cool arc = the web frontend / WebView.
+ *  The gradient between them is the IPC bridge.
+ * ------------------------------------------------------------------ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b0d12;
+  --bg-tint: #0e1118;
+  --surface: #12151d;
+  --surface-2: #171b25;
+  --surface-3: #1d2230;
+  --line: #232936;
+  --line-strong: #313a4c;
+
+  --fg: #e9ecf3;
+  --fg-muted: #9aa4b6;
+  --fg-faint: #6a7488;
+
+  --ember: #ff8a3d;
+  --ember-strong: #ff7420;
+  --ember-soft: rgba(255, 138, 61, 0.14);
+
+  --arc: #35d6c6;
+  --arc-strong: #17c7b4;
+  --arc-soft: rgba(53, 214, 198, 0.14);
+
+  --ring: rgba(53, 214, 198, 0.55);
+
+  /* code tokens */
+  --tok-comment: #5f6b80;
+  --tok-string: #7fe0b6;
+  --tok-keyword: #ff9d5c;
+  --tok-annotation: #4fd8c9;
+  --tok-type: #8bb6ff;
+  --tok-number: #d8a6ff;
+  --tok-key: #6fd3ff;
+  --tok-func: #e9ecf3;
+  --tok-punct: #8791a3;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #fbfbfa;
+  --bg-tint: #f4f5f3;
+  --surface: #ffffff;
+  --surface-2: #f6f7f5;
+  --surface-3: #eef0ee;
+  --line: #e4e6e2;
+  --line-strong: #d2d6d0;
+
+  --fg: #16181d;
+  --fg-muted: #57606f;
+  --fg-faint: #838d9c;
+
+  --ember: #e05e15;
+  --ember-strong: #c94f0c;
+  --ember-soft: rgba(224, 94, 21, 0.1);
+
+  --arc: #0d9a8a;
+  --arc-strong: #0a8577;
+  --arc-soft: rgba(13, 154, 138, 0.1);
+
+  --ring: rgba(13, 154, 138, 0.5);
+
+  --tok-comment: #8a94a3;
+  --tok-string: #0a8060;
+  --tok-keyword: #b5480f;
+  --tok-annotation: #0a8577;
+  --tok-type: #2f5fc0;
+  --tok-number: #7a3fb0;
+  --tok-key: #1170a8;
+  --tok-func: #16181d;
+  --tok-punct: #6b7382;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-tint: var(--bg-tint);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+
+  --color-ember: var(--ember);
+  --color-ember-strong: var(--ember-strong);
+  --color-arc: var(--arc);
+  --color-arc-strong: var(--arc-strong);
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+::selection {
+  background: var(--arc-soft);
+  color: var(--fg);
+}
+
+/* Consistent focus ring for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Fields that provide their own focus affordance opt out of the global ring. */
+.no-focus-ring:focus,
+.no-focus-ring:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Reusable atmosphere
+ * ------------------------------------------------------------------ */
+
+/* The signature warm→cool seam, used on rules and text accents */
+.bridge-text {
+  background: linear-gradient(100deg, var(--ember) 0%, var(--arc) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bridge-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ember) 20%,
+    var(--arc) 80%,
+    transparent
+  );
+  opacity: 0.6;
+}
+
+/* Diagonal signal field, echoing the code that streams across the bridge */
+.signal-field {
+  background-image: repeating-linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--arc) 22%, transparent) 0px,
+    color-mix(in srgb, var(--arc) 22%, transparent) 1px,
+    transparent 1px,
+    transparent 13px
+  );
+  -webkit-mask-image: radial-gradient(
+    120% 90% at 85% 0%,
+    #000 0%,
+    transparent 62%
+  );
+  mask-image: radial-gradient(120% 90% at 85% 0%, #000 0%, transparent 62%);
+}
+
+/* Grid card hover lift */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+.card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Code tokens
+ * ------------------------------------------------------------------ */
+.tok-comment { color: var(--tok-comment); font-style: italic; }
+.tok-string { color: var(--tok-string); }
+.tok-keyword { color: var(--tok-keyword); }
+.tok-annotation { color: var(--tok-annotation); }
+.tok-type { color: var(--tok-type); }
+.tok-number { color: var(--tok-number); }
+.tok-key { color: var(--tok-key); }
+.tok-func { color: var(--tok-func); }
+.tok-punct { color: var(--tok-punct); }
+
+/* ------------------------------------------------------------------ *
+ *  Prose — used for long-form documentation bodies
+ * ------------------------------------------------------------------ */
+.prose {
+  color: var(--fg-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.prose > * + * {
+  margin-top: 1.15rem;
+}
+.prose h2 {
+  color: var(--fg);
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-top: 3rem;
+  scroll-margin-top: 6rem;
+}
+.prose h3 {
+  color: var(--fg);
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2.25rem;
+  scroll-margin-top: 6rem;
+}
+.prose h2 + *,
+.prose h3 + * {
+  margin-top: 0.9rem;
+}
+.prose p { color: var(--fg-muted); }
+.prose strong { color: var(--fg); font-weight: 600; }
+.prose a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--arc);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  transition: color 0.15s ease;
+}
+.prose a:hover { color: var(--arc-strong); }
+.prose ul,
+.prose ol {
+  color: var(--fg-muted);
+  padding-left: 1.25rem;
+}
+.prose ul { list-style: none; padding-left: 0; }
+.prose ul > li {
+  position: relative;
+  padding-left: 1.15rem;
+}
+.prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: linear-gradient(120deg, var(--ember), var(--arc));
+}
+.prose ol { list-style: decimal; }
+.prose li + li { margin-top: 0.5rem; }
+.prose li::marker { color: var(--fg-faint); }
+/* inline code */
+.prose :not(pre) > code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.86em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 0.12em 0.4em;
+  border-radius: 5px;
+}
+.prose blockquote {
+  border-left: 2px solid var(--arc);
+  padding-left: 1rem;
+  color: var(--fg-muted);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose thead th {
+  text-align: left;
+  color: var(--fg);
+  font-weight: 600;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+.prose tbody td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.prose tbody tr:last-child td { border-bottom: none; }

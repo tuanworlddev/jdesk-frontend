@@ -13,6 +13,14 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Our effects read browser-only APIs (matchMedia, scroll position,
+      // localStorage theme) after mount to stay SSR-safe — a single setState on
+      // mount is intended here, so keep this rule as a hint, not a build error.
+      "react-hooks/set-state-in-effect": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;
