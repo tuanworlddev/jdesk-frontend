@@ -35,9 +35,12 @@ const ROWS: { label: string; jdesk: string; tauri: string; electron: string }[] 
 
 export function Comparison() {
   return (
-    <div className="not-prose overflow-hidden rounded-2xl border border-line bg-surface">
+    <div className="not-prose w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-line bg-surface [contain:inline-size]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-sm">
+          <caption className="sr-only">
+            Comparison of JDesk, Tauri, and Electron
+          </caption>
           <thead>
             <tr className="border-b border-line-strong">
               <th className="px-5 py-4 text-left font-medium text-fg-faint" />
@@ -60,9 +63,9 @@ export function Comparison() {
                 key={row.label}
                 className={i < ROWS.length - 1 ? "border-b border-line" : ""}
               >
-                <td className="px-5 py-3.5 font-medium text-fg-muted">
+                <th scope="row" className="px-5 py-3.5 text-left font-medium text-fg-muted">
                   {row.label}
-                </td>
+                </th>
                 <td className="px-5 py-3.5">
                   <span className="rounded-md bg-arc-soft px-2 py-1 font-medium text-fg">
                     {row.jdesk}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -99,7 +100,7 @@ public CompletionStage<Clip> read(InvocationContext context) {
         compromise, keeping the granted set small limits the blast radius.
       </p>
       <Callout variant="note">
-        See the <a href="/docs/security-model">Security model</a> for how the
+        See the <Link href="/docs/security-model">Security model</Link> for how the
         capability gate fits the wider threat model.
       </Callout>
     </DocArticle>

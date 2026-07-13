@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -113,7 +114,7 @@ for (;;) {
             <td>Progress / status pushes</td>
             <td>
               <code>context.events().emit(...)</code> (
-              <a href="/docs/emitting-events">Emitting events</a>).
+              <Link href="/docs/emitting-events">Emitting events</Link>).
             </td>
           </tr>
           <tr>
@@ -126,7 +127,7 @@ for (;;) {
             <td>Large packaged media for &lt;video&gt; / &lt;audio&gt;</td>
             <td>
               Serve as an asset; the pipeline answers Range requests with 206 (
-              <a href="/docs/serving-assets">Serving assets</a>).
+              <Link href="/docs/serving-assets">Serving assets</Link>).
             </td>
           </tr>
         </tbody>

@@ -1,29 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "dark" | "light";
 
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("dark");
-  const [mounted, setMounted] = useState(false);
+const THEME_CHANGE_EVENT = "jdesk-theme-change";
 
-  useEffect(() => {
-    const current =
-      (document.documentElement.getAttribute("data-theme") as Theme) || "dark";
-    setTheme(current);
-    setMounted(true);
-  }, []);
+function subscribeTheme(onChange: () => void) {
+  window.addEventListener(THEME_CHANGE_EVENT, onChange);
+  return () => window.removeEventListener(THEME_CHANGE_EVENT, onChange);
+}
+
+function themeSnapshot(): Theme {
+  return document.documentElement.getAttribute("data-theme") === "light"
+    ? "light"
+    : "dark";
+}
+
+export function ThemeToggle() {
+  const theme = useSyncExternalStore(subscribeTheme, themeSnapshot, () => "dark");
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     try {
       localStorage.setItem("jdesk-theme", next);
     } catch {
       /* ignore */
     }
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }
 
   return (
@@ -33,7 +38,7 @@ export function ThemeToggle() {
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
       className="grid h-9 w-9 place-items-center rounded-lg border border-line text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
     >
-      {mounted && theme === "dark" ? <SunIcon /> : <MoonIcon />}
+      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>
   );
 }

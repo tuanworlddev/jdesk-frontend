@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogoMark, Wordmark } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { SearchDialog } from "./search-dialog";
@@ -18,6 +18,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -27,8 +29,21 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+    if (!open) return;
+    const firstLink = mobileNavRef.current?.querySelector<HTMLElement>("a[href]");
+    const focusId = requestAnimationFrame(() => firstLink?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      cancelAnimationFrame(focusId);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
     <header
@@ -89,10 +104,12 @@ export function SiteHeader() {
             Get started
           </Link>
           <button
+            ref={menuButtonRef}
             type="button"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="site-mobile-navigation"
             className="grid h-9 w-9 place-items-center rounded-lg border border-line text-fg-muted md:hidden"
           >
             <BurgerIcon open={open} />
@@ -102,11 +119,17 @@ export function SiteHeader() {
 
       {open && (
         <div className="border-t border-line bg-bg md:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6">
+          <nav
+            ref={mobileNavRef}
+            id="site-mobile-navigation"
+            aria-label="Mobile navigation"
+            className="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6"
+          >
             {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-fg-muted hover:bg-surface-2 hover:text-fg"
               >
                 {item.label}
@@ -114,6 +137,7 @@ export function SiteHeader() {
             ))}
             <Link
               href="/docs/your-first-app"
+              onClick={() => setOpen(false)}
               className="mt-2 rounded-lg bg-fg px-3 py-2.5 text-center text-sm font-semibold text-bg"
             >
               Get started

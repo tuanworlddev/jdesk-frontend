@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { DocArticle } from "../_components/doc-article";
 import { H2 } from "../_components/prose";
@@ -175,7 +176,7 @@ export default function Page() {
         enqueues; <code>submit</code> returns a{" "}
         <code>CompletionStage</code>; <code>assertUiThread</code> throws{" "}
         <code>ILLEGAL_STATE</code> off-thread in dev and test, and logs and
-        fails safe in production. See <a href="/docs/how-ipc-works">How IPC works</a>.
+        fails safe in production. See <Link href="/docs/how-ipc-works">How IPC works</Link>.
       </p>
 
       <H2 id="errors">Errors</H2>

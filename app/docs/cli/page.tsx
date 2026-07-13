@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -186,7 +187,7 @@ npx create-jdesk-app@latest <project-name> [options]`}
       </table>
 
       <Callout variant="note">
-        See <a href="/docs/installation">Installation</a> for prerequisites and
+        See <Link href="/docs/installation">Installation</Link> for prerequisites and
         first-run setup.
       </Callout>
     </DocArticle>

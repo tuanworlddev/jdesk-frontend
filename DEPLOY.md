@@ -24,7 +24,7 @@ apt-get install -y nodejs nginx git certbot python3-certbot-nginx
 git clone https://github.com/tuanworlddev/jdesk-frontend.git /var/www/jdesk-frontend
 cd /var/www/jdesk-frontend
 npm ci
-npm run build            # -> /var/www/jdesk-frontend/out
+npm run build            # -> out/ plus per-route CSP hashes
 
 # nginx site
 cp deploy/nginx-jdesk.conf /etc/nginx/sites-available/jdesk.dev
@@ -50,7 +50,7 @@ cd /var/www/jdesk-frontend
 git pull
 npm ci
 npm run build
-systemctl reload nginx     # only needed if the nginx config itself changed
+nginx -t && systemctl reload nginx  # reload the generated per-route CSP map
 ```
 
 > Tip: put steps 4 in a `deploy.sh` on the VPS, or wire a GitHub Actions
@@ -64,3 +64,7 @@ systemctl reload nginx     # only needed if the nginx config itself changed
 - The social card is prerendered to `out/opengraph-image`; `metadataBase` is
   `https://jdesk.dev`, so share URLs resolve correctly.
 - `sitemap.xml` and `robots.txt` are generated into `out/` at build time.
+- `out/csp-map.conf` is generated from the exact inline scripts in each exported
+  HTML file. Reload nginx after every build so the strict CSP hashes stay in sync.
+- Security headers shared by all response locations live in
+  `deploy/security-headers.conf`; keep its includes when adding nginx locations.

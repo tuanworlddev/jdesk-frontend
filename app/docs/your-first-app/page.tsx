@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { CodeTabs } from "../../components/code-tabs";
 import { Callout } from "../../components/callout";
@@ -33,7 +34,7 @@ export default function Page() {
       <p>
         This is a lesson, not a reference — follow the steps in order and you
         will end with a working app. Before you start, complete{" "}
-        <a href="/docs/installation">Installation</a> so you have JDK 25+ and
+        <Link href="/docs/installation">Installation</Link> so you have JDK 25+ and
         your operating system&rsquo;s system WebView in place. Because the JDesk
         artifacts are not on Maven Central yet, this tutorial builds against a
         local JDesk checkout passed as <code>--jdesk-source</code>.
@@ -129,7 +130,7 @@ public final class GreetingService {
         generates <code>GreetingServiceCommands</code>, registered in{" "}
         <code>Main</code> via <code>GreetingServiceCommands.create(service)</code>
         . No runtime reflection. See{" "}
-        <a href="/docs/defining-commands">Defining commands</a> for the full
+        <Link href="/docs/defining-commands">Defining commands</Link> for the full
         picture.
       </p>
 
@@ -218,7 +219,7 @@ document.querySelector("#greet-form").addEventListener("submit", (event) => {
       />
       <p>
         For the full message grammar, see{" "}
-        <a href="/docs/how-ipc-works">the IPC protocol reference</a>.
+        <Link href="/docs/how-ipc-works">the IPC protocol reference</Link>.
       </p>
 
       <H2 id="change">6. Change the response</H2>
@@ -250,8 +251,8 @@ document.querySelector("#greet-form").addEventListener("submit", (event) => {
 
       <Callout variant="tip">
         Next, learn how Java pushes updates to the page with{" "}
-        <a href="/docs/emitting-events">Emitting events</a>, or go deeper on the
-        wire protocol with <a href="/docs/how-ipc-works">How IPC works</a>.
+        <Link href="/docs/emitting-events">Emitting events</Link>, or go deeper on the
+        wire protocol with <Link href="/docs/how-ipc-works">How IPC works</Link>.
       </Callout>
     </DocArticle>
   );

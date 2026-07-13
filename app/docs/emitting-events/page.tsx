@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -106,7 +107,7 @@ const off = on("download.progress", (payload) => {
         Navigation drops queued events bound to the previous document.
       </p>
       <Callout variant="note">
-        See <a href="/docs/how-ipc-works">How IPC works</a> for the full
+        See <Link href="/docs/how-ipc-works">How IPC works</Link> for the full
         backpressure model.
       </Callout>
     </DocArticle>

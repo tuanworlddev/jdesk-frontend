@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -149,7 +150,7 @@ connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`}
         request bodies yet, so <code>request.body()</code> is empty there — use a
         command with chunked transfer instead. Live-verified end-to-end on macOS
         (WKWebView). See{" "}
-        <a href="/docs/streaming-binary-data">Streaming binary data</a>.
+        <Link href="/docs/streaming-binary-data">Streaming binary data</Link>.
       </Callout>
     </DocArticle>
   );

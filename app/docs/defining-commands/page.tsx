@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
@@ -160,9 +161,9 @@ const response = await commands.greeting.greet({ name: "Tuan" });`}
       </ul>
 
       <Callout variant="note">
-        See <a href="/docs/capabilities">Capabilities &amp; permissions</a> for
+        See <Link href="/docs/capabilities">Capabilities &amp; permissions</Link> for
         how grants are declared, and{" "}
-        <a href="/docs/emitting-events">Emitting events</a> for pushing updates
+        <Link href="/docs/emitting-events">Emitting events</Link> for pushing updates
         from Java to the page.
       </Callout>
     </DocArticle>

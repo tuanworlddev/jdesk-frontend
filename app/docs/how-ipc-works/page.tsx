@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Callout } from "../../components/callout";
 import { DocArticle } from "../_components/doc-article";
 import { H2 } from "../_components/prose";
@@ -31,7 +32,7 @@ export default function Page() {
     >
       <p>
         This page is understanding-oriented; the exact wire format lives in the{" "}
-        <a href="/docs/protocol">protocol reference</a>.
+        <Link href="/docs/protocol">protocol reference</Link>.
       </p>
 
       <H2 id="channel">The shape of the channel</H2>
@@ -166,7 +167,7 @@ export default function Page() {
         <code>NAVIGATION_RESET</code>.
       </p>
       <Callout variant="note">
-        See <a href="/docs/security-model">Security model</a> for how the
+        See <Link href="/docs/security-model">Security model</Link> for how the
         Java-side checks are defined and enforced.
       </Callout>
     </DocArticle>

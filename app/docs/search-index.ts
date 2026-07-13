@@ -11,7 +11,7 @@ export type SearchEntry = {
  * rather than crawl page content at runtime we keep a small hand-tuned index —
  * title, section, and the terms a reader is likely to type.
  */
-export const SEARCH_INDEX: SearchEntry[] = [
+const CURATED_SEARCH_INDEX: SearchEntry[] = [
   {
     title: "Introduction",
     href: "/docs/introduction",
@@ -125,3 +125,14 @@ export const SEARCH_INDEX: SearchEntry[] = [
       "api reference JDeskApplication WindowConfig CommandRegistry InvocationContext EventEmitter UiDispatcher errors",
   },
 ];
+
+export const SEARCH_INDEX: SearchEntry[] = [
+  ...CURATED_SEARCH_INDEX,
+  ...STANDALONE_DOCS.map((doc) => ({
+    title: doc.title,
+    href: `/docs/${doc.slug}`,
+    group: doc.group,
+    keywords: doc.keywords,
+  })),
+];
+import { STANDALONE_DOCS } from "./standalone-docs";

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { DocArticle } from "../_components/doc-article";
 import { H2 } from "../_components/prose";
@@ -62,7 +63,7 @@ export default function Page() {
         this window.&quot; Grants are per window in{" "}
         <code>jdesk-capabilities.json</code>. Because XSS is a capability-scoped
         compromise, keep the granted set small. See{" "}
-        <a href="/docs/capabilities">Capabilities &amp; permissions</a>.
+        <Link href="/docs/capabilities">Capabilities &amp; permissions</Link>.
       </p>
 
       <H2 id="origin">Origin and navigation locking</H2>

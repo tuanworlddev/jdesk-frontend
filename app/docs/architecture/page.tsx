@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { DocArticle } from "../_components/doc-article";
 import { H2 } from "../_components/prose";
@@ -180,7 +181,7 @@ Result envelope {v,kind:"result",id,ok,value|error}`}
         <li>Navigation invalidates the nonce and cancels in-flight calls.</li>
       </ul>
       <p>
-        <a href="/docs/how-ipc-works">How IPC works</a>.
+        <Link href="/docs/how-ipc-works">How IPC works</Link>.
       </p>
 
       <H2 id="provider">Provider selection</H2>

@@ -23,7 +23,7 @@ export function CodeBlock({
 
   return (
     <div
-      className={`group not-prose overflow-hidden rounded-xl border border-line bg-surface ${className}`}
+      className={`group not-prose min-w-0 max-w-full overflow-hidden rounded-xl border border-line bg-surface ${className}`}
     >
       <div className="flex items-center justify-between gap-3 border-b border-line bg-surface-2 px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">

@@ -22,7 +22,7 @@
 
   --fg: #e9ecf3;
   --fg-muted: #9aa4b6;
-  --fg-faint: #6a7488;
+  --fg-faint: #8490a6;
 
   --ember: #ff8a3d;
   --ember-strong: #ff7420;
@@ -35,7 +35,7 @@
   --ring: rgba(53, 214, 198, 0.55);
 
   /* code tokens */
-  --tok-comment: #5f6b80;
+  --tok-comment: #7d899f;
   --tok-string: #7fe0b6;
   --tok-keyword: #ff9d5c;
   --tok-annotation: #4fd8c9;
@@ -59,7 +59,7 @@
 
   --fg: #16181d;
   --fg-muted: #57606f;
-  --fg-faint: #838d9c;
+  --fg-faint: #697386;
 
   --ember: #e05e15;
   --ember-strong: #c94f0c;
@@ -71,7 +71,7 @@
 
   --ring: rgba(13, 154, 138, 0.5);
 
-  --tok-comment: #8a94a3;
+  --tok-comment: #667085;
   --tok-string: #0a8060;
   --tok-keyword: #b5480f;
   --tok-annotation: #0a8577;
@@ -303,6 +303,22 @@ body {
   padding-left: 1rem;
   color: var(--fg-muted);
 }
+.prose pre {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  padding: 1rem;
+  color: var(--fg);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.83rem;
+  line-height: 1.7;
+}
+.prose pre code {
+  font: inherit;
+  color: inherit;
+}
 .prose table {
   width: 100%;
   border-collapse: collapse;
@@ -321,6 +337,14 @@ body {
 .prose tbody td {
   padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.prose tbody th {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--fg);
+  font-weight: 600;
+  text-align: left;
   vertical-align: top;
 }
 .prose tbody tr:last-child td { border-bottom: none; }

@@ -213,8 +213,8 @@ export default function Home() {
       {/* ------------------------------------------------ Round trip code */}
       <section className="border-y border-line bg-bg-tint">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
+          <div className="grid min-w-0 gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div className="min-w-0">
               <SectionEyebrow tone="ember">One round trip</SectionEyebrow>
               <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-fg sm:text-4xl">
                 Call Java from the web. Get a typed record back.
@@ -263,7 +263,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="min-w-0 space-y-4">
               <CodeBlock
                 code={JAVA_COMMAND}
                 lang="java"

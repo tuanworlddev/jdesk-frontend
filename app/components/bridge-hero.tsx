@@ -1,6 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+
+function reducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 /**
  * The signature illustration: one round trip across the JDesk bridge.
@@ -13,16 +23,13 @@ import { useEffect, useState } from "react";
  * motion.
  */
 export function BridgeHero() {
-  const [animate, setAnimate] = useState(false);
   const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setAnimate(!mq.matches);
-    const onChange = () => setAnimate(!mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  const reduceMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    reducedMotionSnapshot,
+    () => true,
+  );
+  const animate = !reduceMotion;
 
   useEffect(() => {
     if (!animate) return;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLink } from "../components/ui";
+import { DOCS_NAV } from "./nav";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -14,44 +15,24 @@ const CARDS = [
     kicker: "Start here",
     title: "Getting started",
     body: "Understand the model, install the toolchain, and build a working app that calls Java from the web UI.",
-    links: [
-      { title: "Introduction", href: "/docs/introduction" },
-      { title: "Installation", href: "/docs/installation" },
-      { title: "Your first app", href: "/docs/your-first-app" },
-    ],
   },
   {
     tone: "ember" as const,
     kicker: "Build",
     title: "Guides",
     body: "Task-oriented how-tos for defining commands, emitting events, granting capabilities, and driving the CLI.",
-    links: [
-      { title: "Defining commands", href: "/docs/defining-commands" },
-      { title: "Emitting events", href: "/docs/emitting-events" },
-      { title: "Capabilities & permissions", href: "/docs/capabilities" },
-    ],
   },
   {
     tone: "arc" as const,
     kicker: "Understand",
     title: "Concepts",
     body: "How the pieces fit: the architecture, the asynchronous typed IPC, and the Java-enforced security model.",
-    links: [
-      { title: "Architecture overview", href: "/docs/architecture" },
-      { title: "How IPC works", href: "/docs/how-ipc-works" },
-      { title: "Security model", href: "/docs/security-model" },
-    ],
   },
   {
     tone: "ember" as const,
     kicker: "Look up",
     title: "Reference",
     body: "Exact, complete descriptions of the public Java API surface and the command / event vocabulary.",
-    links: [
-      { title: "Java API", href: "/docs/java-api" },
-      { title: "The CLI", href: "/docs/cli" },
-      { title: "Project structure", href: "/docs/project-structure" },
-    ],
   },
 ];
 
@@ -98,7 +79,9 @@ export default function DocsHome() {
 
       {/* section cards */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {CARDS.map((card) => (
+        {CARDS.map((card) => {
+          const links = DOCS_NAV.find((group) => group.title === card.title)?.items ?? [];
+          return (
           <div key={card.title} className="card flex flex-col p-6">
             <div
               className={`font-mono text-xs font-medium uppercase tracking-[0.16em] ${
@@ -114,7 +97,7 @@ export default function DocsHome() {
               {card.body}
             </p>
             <ul className="mt-4 space-y-1.5">
-              {card.links.map((l) => (
+              {links.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -127,7 +110,8 @@ export default function DocsHome() {
               ))}
             </ul>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-10 flex items-center justify-between rounded-xl border border-line bg-surface px-6 py-5">

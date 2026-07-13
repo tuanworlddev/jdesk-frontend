@@ -1,6 +1,6 @@
 # JDesk website
 
-The official website and documentation for the [JDesk](../JDesk) framework —
+The standalone official website and documentation for the JDesk framework —
 desktop apps with a Java 25 core and a web UI. Built with Next.js 16 (App
 Router) and Tailwind CSS v4.
 
@@ -32,7 +32,9 @@ app/
     nav.ts                # sidebar navigation + prev/next order
     _components/          # doc-sidebar, toc (scrollspy), doc-article, prose
     page.tsx              # documentation hub
-    <topic>/page.tsx      # one page per doc topic
+    <topic>/page.tsx      # hand-crafted core pages
+    [slug]/page.tsx       # standalone Markdown-backed reference pages
+content/docs/             # documentation owned and shipped by this repository
 ```
 
 ## Design
@@ -40,5 +42,5 @@ app/
 The visual identity is **"The Bridge"**: warm ember represents the Java core,
 cool teal the web frontend, and the gradient between them the typed IPC bridge
 that connects them. Light and dark themes are driven by CSS custom properties
-and a `data-theme` attribute set before first paint. Content is sourced from
-the JDesk framework docs under `../JDesk/docs`.
+and a `data-theme` attribute set before first paint. All production content is
+stored in this repository; the build has no dependency on a JDesk checkout.

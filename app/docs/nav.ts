@@ -7,8 +7,8 @@ export const DOCS_NAV: DocGroup[] = [
     items: [
       { title: "Introduction", href: "/docs/introduction" },
       { title: "Installation", href: "/docs/installation" },
-      { title: "Your first app", href: "/docs/your-first-app" },
       { title: "Project structure", href: "/docs/project-structure" },
+      { title: "Your first app", href: "/docs/your-first-app" },
     ],
   },
   {
@@ -17,11 +17,21 @@ export const DOCS_NAV: DocGroup[] = [
       { title: "Defining commands", href: "/docs/defining-commands" },
       { title: "Emitting events", href: "/docs/emitting-events" },
       { title: "Streaming binary data", href: "/docs/streaming-binary-data" },
+      { title: "Networked & real-time apps", href: "/docs/networked-real-time" },
+      { title: "Store secrets", href: "/docs/storing-secrets" },
+      { title: "Dialogs & printing", href: "/docs/dialogs-printing" },
+      { title: "Automation & E2E", href: "/docs/automation-e2e" },
+      { title: "Updating applications", href: "/docs/updating-applications" },
+      { title: "Enterprise managed policy", href: "/docs/enterprise-policy" },
+      { title: "Diagnostics & support", href: "/docs/diagnostics-support" },
       { title: "Capabilities & permissions", href: "/docs/capabilities" },
+      { title: "Managing windows", href: "/docs/managing-windows" },
       { title: "Serving assets", href: "/docs/serving-assets" },
+      { title: "Choosing a frontend", href: "/docs/choosing-frontend" },
       { title: "The dev loop & HMR", href: "/docs/the-dev-loop" },
+      { title: "TypeScript bindings", href: "/docs/typescript-bindings" },
       { title: "Packaging your app", href: "/docs/packaging" },
-      { title: "The CLI", href: "/docs/cli" },
+      { title: "Signing & distributing", href: "/docs/signing-distributing" },
     ],
   },
   {
@@ -29,12 +39,22 @@ export const DOCS_NAV: DocGroup[] = [
     items: [
       { title: "Architecture overview", href: "/docs/architecture" },
       { title: "How IPC works", href: "/docs/how-ipc-works" },
+      { title: "Threading & event loop", href: "/docs/threading-event-loop" },
+      { title: "Native memory & FFM", href: "/docs/native-memory-ffm" },
       { title: "Security model", href: "/docs/security-model" },
     ],
   },
   {
     title: "Reference",
-    items: [{ title: "Java API", href: "/docs/java-api" }],
+    items: [
+      { title: "Java API", href: "/docs/java-api" },
+      { title: "The CLI", href: "/docs/cli" },
+      { title: "Gradle plugin", href: "/docs/gradle-plugin" },
+      { title: "IPC protocol", href: "/docs/protocol" },
+      { title: "Capabilities JSON", href: "/docs/capabilities-json" },
+      { title: "Error codes", href: "/docs/error-codes" },
+      { title: "TypeScript client", href: "/docs/typescript-client" },
+    ],
   },
 ];
 

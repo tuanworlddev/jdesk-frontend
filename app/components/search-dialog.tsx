@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SEARCH_INDEX, type SearchEntry } from "../docs/search-index";
+import { useModalDialog } from "../hooks/use-modal-dialog";
 
 function scoreEntry(entry: SearchEntry, terms: string[]): number {
   const hay = `${entry.title} ${entry.group} ${entry.keywords}`.toLowerCase();
@@ -22,6 +23,8 @@ export function SearchDialog() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -41,6 +44,12 @@ export function SearchDialog() {
     setActive(0);
   }, []);
 
+  const openDialog = useCallback(() => {
+    setQuery("");
+    setActive(0);
+    setOpen(true);
+  }, []);
+
   const go = useCallback(
     (href: string) => {
       close();
@@ -49,27 +58,26 @@ export function SearchDialog() {
     [close, router],
   );
 
-  // Global ⌘K / Ctrl+K to open.
+  useModalDialog({
+    open,
+    onClose: close,
+    dialogRef,
+    triggerRef,
+    initialFocusRef: inputRef,
+  });
+
+  // Global ⌘K / Ctrl+K to open or close.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((v) => !v);
+        if (open) close();
+        else openDialog();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  useEffect(() => {
-    if (open) {
-      setActive(0);
-      const id = requestAnimationFrame(() => inputRef.current?.focus());
-      return () => cancelAnimationFrame(id);
-    }
-  }, [open]);
-
-  useEffect(() => setActive(0), [query]);
+  }, [close, open, openDialog]);
 
   // Keep the active row in view.
   useEffect(() => {
@@ -80,7 +88,7 @@ export function SearchDialog() {
   const onInputKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((a) => Math.min(a + 1, results.length - 1));
+      setActive((a) => Math.min(a + 1, Math.max(results.length - 1, 0)));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActive((a) => Math.max(a - 1, 0));
@@ -98,9 +106,13 @@ export function SearchDialog() {
     <>
       {/* Trigger */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
         aria-label="Search documentation"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls="docs-search-dialog"
         className="flex h-9 items-center gap-2 rounded-lg border border-line bg-surface-2/60 px-2.5 text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
       >
         <SearchIcon />
@@ -119,19 +131,36 @@ export function SearchDialog() {
           />
           <div className="absolute left-1/2 top-[12vh] w-[92vw] max-w-xl -translate-x-1/2">
             <div
+              ref={dialogRef}
+              id="docs-search-dialog"
               role="dialog"
               aria-modal="true"
-              aria-label="Search documentation"
+              aria-labelledby="docs-search-title"
+              tabIndex={-1}
               className="overflow-hidden rounded-2xl border border-line-strong bg-bg shadow-2xl"
             >
               <div className="flex items-center gap-3 border-b border-line px-4">
                 <SearchIcon />
+                <span id="docs-search-title" className="sr-only">
+                  Search documentation
+                </span>
                 <input
                   ref={inputRef}
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setActive(0);
+                  }}
                   onKeyDown={onInputKey}
                   placeholder="Search the docs…"
+                  role="combobox"
+                  aria-label="Search documentation"
+                  aria-autocomplete="list"
+                  aria-expanded="true"
+                  aria-controls="docs-search-results"
+                  aria-activedescendant={
+                    results[active] ? `docs-search-option-${active}` : undefined
+                  }
                   className="no-focus-ring h-14 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-fg-faint"
                 />
                 <kbd className="rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[0.65rem] text-fg-faint">
@@ -139,16 +168,29 @@ export function SearchDialog() {
                 </kbd>
               </div>
 
-              <ul ref={listRef} className="max-h-[56vh] overflow-y-auto p-2">
+              <ul
+                ref={listRef}
+                id="docs-search-results"
+                role="listbox"
+                aria-label="Documentation results"
+                className="max-h-[56vh] overflow-y-auto p-2"
+              >
                 {results.length === 0 && (
                   <li className="px-3 py-8 text-center text-sm text-fg-muted">
                     No matches for “{query}”.
                   </li>
                 )}
                 {results.map((entry, i) => (
-                  <li key={entry.href} data-idx={i}>
+                  <li
+                    key={entry.href}
+                    id={`docs-search-option-${i}`}
+                    data-idx={i}
+                    role="option"
+                    aria-selected={active === i}
+                  >
                     <button
                       type="button"
+                      tabIndex={-1}
                       onMouseMove={() => setActive(i)}
                       onClick={() => go(entry.href)}
                       className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${

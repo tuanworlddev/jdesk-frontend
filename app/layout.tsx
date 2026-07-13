@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
@@ -38,20 +39,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Set the theme before first paint so there is no flash of the wrong theme.
-const themeScript = `
-(function () {
-  try {
-    var stored = localStorage.getItem("jdesk-theme");
-    var theme = stored ||
-      (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    document.documentElement.setAttribute("data-theme", theme);
-  } catch (e) {
-    document.documentElement.setAttribute("data-theme", "dark");
-  }
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -62,7 +49,7 @@ export default function RootLayout({
       className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
       </head>
       <body className="min-h-screen flex flex-col">
         <a

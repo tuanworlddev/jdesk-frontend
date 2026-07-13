@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "../../components/code-block";
 import { CodeTabs } from "../../components/code-tabs";
 import { DocArticle } from "../_components/doc-article";
@@ -31,7 +32,7 @@ export default function Page() {
     >
       <p>
         This is a reference: it describes what each file is and does. Scaffold
-        one to follow along (see <a href="/docs/installation">Installation</a>).
+        one to follow along (see <Link href="/docs/installation">Installation</Link>).
       </p>
 
       <H2 id="basic-layout">The basic layout</H2>
