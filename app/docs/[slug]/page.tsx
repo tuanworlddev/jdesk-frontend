@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -11,16 +9,10 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { DocArticle } from "../_components/doc-article";
-import {
-  STANDALONE_DOCS,
-  STANDALONE_DOC_BY_SLUG,
-} from "../standalone-docs";
+import { fetchDoc, fetchDocsNav, siblingsOf } from "../../lib/docs";
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return STANDALONE_DOCS.map(({ slug }) => ({ slug }));
-}
+// Docs render from the CMS database on each request, so admin edits go live.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -28,16 +20,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const doc = STANDALONE_DOC_BY_SLUG.get(slug);
+  const doc = await fetchDoc(slug);
   if (!doc) return {};
   return { title: doc.title, description: doc.description };
-}
-
-function markdownFor(slug: string) {
-  return readFileSync(
-    path.join(process.cwd(), "content", "docs", `${slug}.md`),
-    "utf8",
-  );
 }
 
 function plainText(node: ReactNode): string {
@@ -76,23 +61,25 @@ function tocFrom(markdown: string) {
   });
 }
 
-export default async function StandaloneDocPage({
+export default async function DocPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const doc = STANDALONE_DOC_BY_SLUG.get(slug);
+  const [doc, { flat }] = await Promise.all([fetchDoc(slug), fetchDocsNav()]);
   if (!doc) notFound();
 
-  const markdown = markdownFor(slug);
+  const { prev, next } = siblingsOf(flat, `/docs/${doc.slug}`);
+
   return (
     <DocArticle
-      eyebrow={doc.group}
+      eyebrow={doc.eyebrow || doc.group}
       title={doc.title}
       description={doc.description}
-      href={`/docs/${doc.slug}`}
-      toc={tocFrom(markdown)}
+      toc={tocFrom(doc.content)}
+      prev={prev}
+      next={next}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
@@ -133,7 +120,7 @@ export default async function StandaloneDocPage({
           ),
         }}
       >
-        {markdown}
+        {doc.content}
       </ReactMarkdown>
     </DocArticle>
   );

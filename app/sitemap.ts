@@ -1,12 +1,11 @@
-export const dynamic = "force-static";
-
 import type { MetadataRoute } from "next";
-import { DOCS_FLAT } from "./docs/nav";
+import { fetchDocList } from "./lib/docs";
 
 const BASE = "https://jdesk.dev";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["", "/docs", ...DOCS_FLAT.map((l) => l.href)];
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const docs = await fetchDocList().catch(() => []);
+  const paths = ["", "/docs", ...docs.map((d) => `/docs/${d.slug}`)];
   return paths.map((path) => ({
     url: `${BASE}${path}`,
     changeFrequency: "weekly",

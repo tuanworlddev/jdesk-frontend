@@ -8,58 +8,7 @@ import {
   PrimaryButton,
   SectionEyebrow,
 } from "./components/ui";
-
-const JAVA_COMMAND = `@DesktopCommand("greeting.greet")
-@RequiresCapability("greeting:use")
-public CompletionStage<Response> greet(Request req, InvocationContext ctx) {
-    String name = req.name().isBlank() ? "world" : req.name().strip();
-    return completedFuture(new Response("Hello, " + name + "!"));
-}`;
-
-const TS_CALL = `import { commands } from "./jdesk-ts/commands";
-
-// Fully typed — the argument and result come from your Java records.
-const res = await commands.greeting.greet({ name: "Tuan" });
-result.textContent = res.message; // "Hello, Tuan!"`;
-
-const PILLARS = [
-  {
-    tone: "ember" as const,
-    icon: "browser" as const,
-    title: "No bundled Chromium",
-    body: "Render in the WebView already on the machine — WebView2, WKWebView, WebKitGTK. Apps stay small instead of shipping 100+ MB of browser.",
-  },
-  {
-    tone: "arc" as const,
-    icon: "cube" as const,
-    title: "No Rust to learn",
-    body: "Small binaries come from a trimmed JVM runtime image via jlink, not a new systems language. If your team knows Java and Gradle, you're ready.",
-  },
-  {
-    tone: "ember" as const,
-    icon: "bolt" as const,
-    title: "No Node at runtime",
-    body: "The frontend is static files served over the jdesk://app/ scheme. There is no local web server in production, and Node is only a build-time tool.",
-  },
-  {
-    tone: "arc" as const,
-    icon: "code" as const,
-    title: "Compile-time typed IPC",
-    body: "An annotation processor discovers @DesktopCommand methods and generates a typed TypeScript client. No runtime reflection, no glue that drifts.",
-  },
-  {
-    tone: "ember" as const,
-    icon: "shield" as const,
-    title: "Secure by default",
-    body: "Every command needs an explicit capability grant. Navigation is locked to the app origin, popups denied, path traversal rejected — enforced in Java.",
-  },
-  {
-    tone: "arc" as const,
-    icon: "package" as const,
-    title: "Native packaging built in",
-    body: "jlink + jpackage produce DMG/PKG, MSI/EXE, and DEB/RPM, each with SHA-256 checksums and a CycloneDX SBOM. Verified on real system WebViews.",
-  },
-];
+import { fetchSiteContent } from "./lib/site-content";
 
 function PillarIcon({ name }: { name: string }) {
   const p = { fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
@@ -108,21 +57,14 @@ function PillarIcon({ name }: { name: string }) {
         </svg>
       );
     default:
-      return null;
+      return <span className="h-2.5 w-2.5 rounded-sm bg-current" />;
   }
 }
 
-const PLATFORMS = [
-  {
-    os: "Windows",
-    webview: "WebView2 (Evergreen)",
-    target: "Windows 10 1809+",
-  },
-  { os: "macOS", webview: "WKWebView", target: "macOS 13 Ventura+" },
-  { os: "Linux", webview: "WebKitGTK 4.1", target: "Ubuntu 22.04+" },
-];
+export default async function Home() {
+  const { home } = await fetchSiteContent();
+  const { hero, why, pillars, platforms, roundTrip, comparison, cta } = home;
 
-export default function Home() {
   return (
     <>
       {/* ---------------------------------------------------------- Hero */}
@@ -134,32 +76,27 @@ export default function Home() {
         <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 lg:px-8 lg:pt-24">
           <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
             <div>
-              <Eyebrow>Java&nbsp;25 core · System WebView · Open source</Eyebrow>
+              <Eyebrow>{hero.eyebrow}</Eyebrow>
               <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-fg sm:text-5xl lg:text-6xl">
                 Desktop apps with a{" "}
-                <span className="bridge-text">Java core</span> and a{" "}
-                <span className="bridge-text">web UI</span>.
+                <span className="bridge-text">{hero.titleA}</span> and a{" "}
+                <span className="bridge-text">{hero.titleB}</span>.
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-fg-muted">
-                JDesk pairs a Java&nbsp;25 application core with the operating
-                system&rsquo;s own WebView — WebView2, WKWebView, WebKitGTK. The
-                Tauri development model, without Rust, without bundled Chromium.
+                {hero.subtitle}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <PrimaryButton href="/docs/your-first-app">
-                  Build your first app
+                <PrimaryButton href={hero.ctaPrimary.href}>
+                  {hero.ctaPrimary.label}
                 </PrimaryButton>
-                <GhostButton href="/docs/introduction">
-                  Read the introduction
+                <GhostButton href={hero.ctaSecondary.href}>
+                  {hero.ctaSecondary.label}
                 </GhostButton>
               </div>
 
               <div className="mt-8 max-w-md">
-                <CodeBlock
-                  code={`npm create jdesk-app@latest my-app`}
-                  terminal
-                />
+                <CodeBlock code={hero.command} terminal />
                 <p className="mt-2.5 font-mono text-xs text-fg-faint">
                   Requires JDK&nbsp;25+ and your platform&rsquo;s system WebView.
                 </p>
@@ -176,34 +113,30 @@ export default function Home() {
       {/* ---------------------------------------------------- Why JDesk */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <SectionEyebrow>Why JDesk</SectionEyebrow>
+          <SectionEyebrow>{why.eyebrow}</SectionEyebrow>
           <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-fg sm:text-4xl">
-            The small-native trade-off, made for Java teams.
+            {why.title}
           </h2>
-          <p className="mt-4 text-lg text-fg-muted">
-            Keep business logic, system integration, lifecycle, and packaging in
-            Java. Build the UI with React, Vue, Svelte, or plain HTML. Ship a
-            small native app.
-          </p>
+          <p className="mt-4 text-lg text-fg-muted">{why.subtitle}</p>
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PILLARS.map((p) => (
-            <div key={p.title} className="card p-6">
+          {pillars.map((pillar) => (
+            <div key={pillar.title} className="card p-6">
               <div
                 className={`mb-4 grid h-10 w-10 place-items-center rounded-lg border ${
-                  p.tone === "ember"
+                  pillar.tone === "ember"
                     ? "border-ember/30 bg-ember-soft text-ember"
                     : "border-arc/30 bg-arc-soft text-arc-strong"
                 }`}
               >
-                <PillarIcon name={p.icon} />
+                <PillarIcon name={pillar.icon} />
               </div>
               <h3 className="font-display text-lg font-semibold text-fg">
-                {p.title}
+                {pillar.title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-fg-muted">
-                {p.body}
+                {pillar.body}
               </p>
             </div>
           ))}
@@ -215,25 +148,13 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid min-w-0 gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div className="min-w-0">
-              <SectionEyebrow tone="ember">One round trip</SectionEyebrow>
+              <SectionEyebrow tone="ember">{roundTrip.eyebrow}</SectionEyebrow>
               <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-fg sm:text-4xl">
-                Call Java from the web. Get a typed record back.
+                {roundTrip.title}
               </h2>
-              <p className="mt-4 text-lg text-fg-muted">
-                Annotate a method with{" "}
-                <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[0.85em] text-fg">
-                  @DesktopCommand
-                </code>{" "}
-                and JDesk generates a typed client for it. The frontend invokes;
-                the handler runs on a virtual thread, off the UI thread; exactly
-                one result crosses back — correlated by request id.
-              </p>
+              <p className="mt-4 text-lg text-fg-muted">{roundTrip.intro}</p>
               <ul className="mt-6 space-y-3">
-                {[
-                  "Deny-by-default capability check runs before your code.",
-                  "Handlers block freely on virtual threads — no async plumbing.",
-                  "The generated TypeScript client keeps types in sync at compile time.",
-                ].map((t) => (
+                {roundTrip.bullets.map((t) => (
                   <li key={t} className="flex gap-3 text-sm text-fg-muted">
                     <svg
                       width="18"
@@ -257,19 +178,23 @@ export default function Home() {
                 ))}
               </ul>
               <div className="mt-7">
-                <ArrowLink href="/docs/defining-commands">
-                  Defining commands
+                <ArrowLink href={roundTrip.link.href}>
+                  {roundTrip.link.label}
                 </ArrowLink>
               </div>
             </div>
 
             <div className="min-w-0 space-y-4">
               <CodeBlock
-                code={JAVA_COMMAND}
+                code={roundTrip.javaCode}
                 lang="java"
-                filename="GreetingService.java"
+                filename={roundTrip.javaFilename}
               />
-              <CodeBlock code={TS_CALL} lang="ts" filename="ui/src/main.ts" />
+              <CodeBlock
+                code={roundTrip.tsCode}
+                lang="ts"
+                filename={roundTrip.tsFilename}
+              />
             </div>
           </div>
         </div>
@@ -278,19 +203,14 @@ export default function Home() {
       {/* --------------------------------------------------- Comparison */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <SectionEyebrow>How it compares</SectionEyebrow>
+          <SectionEyebrow>{comparison.eyebrow}</SectionEyebrow>
           <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-fg sm:text-4xl">
-            Same trade-off as Tauri, in the language you already ship.
+            {comparison.title}
           </h2>
-          <p className="mt-4 text-lg text-fg-muted">
-            JDesk trades Electron&rsquo;s one-identical-engine guarantee for
-            small apps on each platform&rsquo;s native WebView. If pixel-identical
-            rendering everywhere is a hard requirement, Electron is still the
-            safer choice.
-          </p>
+          <p className="mt-4 text-lg text-fg-muted">{comparison.intro}</p>
         </div>
         <div className="mt-10">
-          <Comparison />
+          <Comparison rows={comparison.rows} />
         </div>
       </section>
 
@@ -311,22 +231,22 @@ export default function Home() {
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {PLATFORMS.map((p) => (
-              <div key={p.os} className="card p-6">
+            {platforms.map((platform) => (
+              <div key={platform.os} className="card p-6">
                 <div className="font-display text-xl font-semibold text-fg">
-                  {p.os}
+                  {platform.os}
                 </div>
                 <dl className="mt-4 space-y-3 text-sm">
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-fg-faint">WebView</dt>
                     <dd className="text-right font-mono text-fg-muted">
-                      {p.webview}
+                      {platform.webview}
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-4 border-t border-line pt-3">
                     <dt className="text-fg-faint">Minimum</dt>
                     <dd className="text-right font-mono text-fg-muted">
-                      {p.target}
+                      {platform.target}
                     </dd>
                   </div>
                 </dl>
@@ -341,20 +261,21 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 signal-field opacity-60" />
         <div className="relative mx-auto max-w-4xl px-4 py-24 text-center sm:px-6 lg:px-8">
           <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-fg sm:text-5xl">
-            Scaffold an app in one command.
+            {cta.title}
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-lg text-fg-muted">
-            Pick a template — basic, React, Vue, Svelte, or a structured
-            multi-module layout — and run it on your OS.
+            {cta.subtitle}
           </p>
           <div className="mx-auto mt-8 max-w-md">
-            <CodeBlock code={`npx create-jdesk-app@latest my-app`} terminal />
+            <CodeBlock code={cta.command} terminal />
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <PrimaryButton href="/docs/installation">
-              Installation guide
+            <PrimaryButton href={cta.ctaPrimary.href}>
+              {cta.ctaPrimary.label}
             </PrimaryButton>
-            <GhostButton href="/docs">Browse the docs</GhostButton>
+            <GhostButton href={cta.ctaSecondary.href}>
+              {cta.ctaSecondary.label}
+            </GhostButton>
           </div>
         </div>
       </section>

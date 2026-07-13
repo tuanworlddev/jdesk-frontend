@@ -1,25 +1,28 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { siblings } from "../nav";
 import { Toc, type TocItem } from "./toc";
+
+type NavLink = { title: string; href: string };
 
 export function DocArticle({
   eyebrow,
   title,
   description,
-  href,
   toc = [],
+  prev = null,
+  next = null,
   children,
 }: {
   eyebrow: string;
   title: string;
   description: string;
-  href: string;
+  /** Optional; the current route. Kept for callers that still pass it. */
+  href?: string;
   toc?: TocItem[];
+  prev?: NavLink | null;
+  next?: NavLink | null;
   children: ReactNode;
 }) {
-  const { prev, next } = siblings(href);
-
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_200px]">
       <article className="min-w-0 py-8 lg:py-10">

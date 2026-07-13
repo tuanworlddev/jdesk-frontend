@@ -1,37 +1,15 @@
 import Link from "next/link";
 import { LogoMark } from "./logo";
+import { FeedbackLink } from "./feedback-link";
+import type { FooterContent, GeneralContent } from "../lib/site-content";
 
-const COLUMNS = [
-  {
-    title: "Get started",
-    links: [
-      { label: "Introduction", href: "/docs/introduction" },
-      { label: "Installation", href: "/docs/installation" },
-      { label: "Your first app", href: "/docs/your-first-app" },
-      { label: "Project structure", href: "/docs/project-structure" },
-    ],
-  },
-  {
-    title: "Guides",
-    links: [
-      { label: "Defining commands", href: "/docs/defining-commands" },
-      { label: "Streaming binary data", href: "/docs/streaming-binary-data" },
-      { label: "Serving assets", href: "/docs/serving-assets" },
-      { label: "Packaging your app", href: "/docs/packaging" },
-    ],
-  },
-  {
-    title: "Concepts",
-    links: [
-      { label: "Architecture", href: "/docs/architecture" },
-      { label: "How IPC works", href: "/docs/how-ipc-works" },
-      { label: "Security model", href: "/docs/security-model" },
-      { label: "Java API", href: "/docs/java-api" },
-    ],
-  },
-];
-
-export function SiteFooter() {
+export function SiteFooter({
+  footer,
+  general,
+}: {
+  footer: FooterContent;
+  general: GeneralContent;
+}) {
   return (
     <footer className="border-t border-line bg-bg-tint">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -40,16 +18,14 @@ export function SiteFooter() {
             <div className="flex items-center gap-2.5">
               <LogoMark />
               <span className="font-display text-lg font-semibold text-fg">
-                JDesk
+                {general.siteName}
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-fg-muted">
-              Desktop apps with a Java 25 core and a web UI, rendered by the
-              operating system&rsquo;s own WebView. The Tauri model, without
-              Rust.
+              {footer.tagline}
             </p>
           </div>
-          {COLUMNS.map((col) => (
+          {footer.columns.map((col) => (
             <div key={col.title}>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-faint">
                 {col.title}
@@ -71,13 +47,11 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-line pt-6 sm:flex-row sm:items-center">
-          <p className="text-xs text-fg-faint">
-            Apache-2.0 licensed. JDesk is open source and under active
-            development.
-          </p>
+          <p className="text-xs text-fg-faint">{footer.legal}</p>
           <div className="flex items-center gap-5 text-xs text-fg-muted">
+            <FeedbackLink />
             <a
-              href="https://github.com/tuanworlddev/jdesk"
+              href={general.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-fg"
@@ -85,7 +59,7 @@ export function SiteFooter() {
               GitHub
             </a>
             <a
-              href="https://www.npmjs.com/package/create-jdesk-app"
+              href={general.npmUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-fg"

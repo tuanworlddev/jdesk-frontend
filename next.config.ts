@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // Server mode (SSR) so docs render live from the CMS database.
   images: { unoptimized: true },
   poweredByHeader: false,
   experimental: {

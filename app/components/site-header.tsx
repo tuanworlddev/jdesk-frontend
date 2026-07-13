@@ -6,15 +6,15 @@ import { useEffect, useRef, useState } from "react";
 import { LogoMark, Wordmark } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { SearchDialog } from "./search-dialog";
+import type { GeneralContent, NavContent } from "../lib/site-content";
 
-const NAV = [
-  { label: "Docs", href: "/docs" },
-  { label: "Install", href: "/docs/installation" },
-  { label: "Guides", href: "/docs/defining-commands" },
-  { label: "Concepts", href: "/docs/architecture" },
-];
-
-export function SiteHeader() {
+export function SiteHeader({
+  nav,
+  general,
+}: {
+  nav: NavContent;
+  general: GeneralContent;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -64,7 +64,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="ml-4 hidden items-center gap-1 md:flex">
-          {NAV.map((item) => {
+          {nav.items.map((item) => {
             const active =
               item.href === "/docs"
                 ? pathname === "/docs"
@@ -88,7 +88,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <SearchDialog />
           <a
-            href="https://github.com/tuanworlddev/jdesk"
+            href={general.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="JDesk on GitHub"
@@ -98,10 +98,10 @@ export function SiteHeader() {
           </a>
           <ThemeToggle />
           <Link
-            href="/docs/your-first-app"
+            href={nav.cta.href}
             className="hidden rounded-lg bg-fg px-3.5 py-2 text-sm font-semibold text-bg transition-opacity hover:opacity-90 sm:inline-block"
           >
-            Get started
+            {nav.cta.label}
           </Link>
           <button
             ref={menuButtonRef}
@@ -125,7 +125,7 @@ export function SiteHeader() {
             aria-label="Mobile navigation"
             className="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6"
           >
-            {NAV.map((item) => (
+            {nav.items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -136,11 +136,11 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/docs/your-first-app"
+              href={nav.cta.href}
               onClick={() => setOpen(false)}
               className="mt-2 rounded-lg bg-fg px-3 py-2.5 text-center text-sm font-semibold text-bg"
             >
-              Get started
+              {nav.cta.label}
             </Link>
           </nav>
         </div>

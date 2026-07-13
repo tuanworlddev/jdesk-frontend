@@ -1,39 +1,6 @@
-const ROWS: { label: string; jdesk: string; tauri: string; electron: string }[] =
-  [
-    { label: "Backend language", jdesk: "Java (JVM)", tauri: "Rust", electron: "Node.js" },
-    {
-      label: "Renderer",
-      jdesk: "System WebView",
-      tauri: "System WebView",
-      electron: "Bundled Chromium",
-    },
-    {
-      label: "Bundle size",
-      jdesk: "Small (jlink runtime)",
-      tauri: "Smallest",
-      electron: "Large (100+ MB)",
-    },
-    {
-      label: "Runtime dependency",
-      jdesk: "Trimmed JVM (bundled)",
-      tauri: "None",
-      electron: "Bundled Chromium",
-    },
-    {
-      label: "IPC",
-      jdesk: "Compile-time typed",
-      tauri: "Typed commands",
-      electron: "IPC channels",
-    },
-    {
-      label: "Best fit",
-      jdesk: "Java / JVM teams",
-      tauri: "Rust / native teams",
-      electron: "Max web-parity",
-    },
-  ];
+import type { ComparisonRow } from "../lib/site-content";
 
-export function Comparison() {
+export function Comparison({ rows }: { rows: ComparisonRow[] }) {
   return (
     <div className="not-prose w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-line bg-surface [contain:inline-size]">
       <div className="overflow-x-auto">
@@ -58,10 +25,10 @@ export function Comparison() {
             </tr>
           </thead>
           <tbody>
-            {ROWS.map((row, i) => (
+            {rows.map((row, i) => (
               <tr
                 key={row.label}
-                className={i < ROWS.length - 1 ? "border-b border-line" : ""}
+                className={i < rows.length - 1 ? "border-b border-line" : ""}
               >
                 <th scope="row" className="px-5 py-3.5 text-left font-medium text-fg-muted">
                   {row.label}

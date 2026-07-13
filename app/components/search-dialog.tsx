@@ -3,6 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SEARCH_INDEX, type SearchEntry } from "../docs/search-index";
+import { apiGet } from "../lib/api";
+
+type DocListItem = {
+  slug: string;
+  title: string;
+  description: string;
+  group: string;
+};
 import { useModalDialog } from "../hooks/use-modal-dialog";
 
 function scoreEntry(entry: SearchEntry, terms: string[]): number {
@@ -23,20 +31,41 @@ export function SearchDialog() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const [entries, setEntries] = useState<SearchEntry[]>(SEARCH_INDEX);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
+  // Build the index from the CMS documents; fall back to the static index.
+  useEffect(() => {
+    apiGet<DocListItem[]>("/documents")
+      .then((docs) => {
+        if (!docs.length) return;
+        setEntries(
+          docs.map((d) => ({
+            title: d.title,
+            href: `/docs/${d.slug}`,
+            group: d.group,
+            keywords: d.description,
+          })),
+        );
+      })
+      .catch(() => {
+        /* keep the static fallback */
+      });
+  }, []);
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return SEARCH_INDEX;
+    if (!q) return entries;
     const terms = q.split(/\s+/);
-    return SEARCH_INDEX.map((e) => ({ e, s: scoreEntry(e, terms) }))
+    return entries
+      .map((e) => ({ e, s: scoreEntry(e, terms) }))
       .filter((x) => x.s >= 0)
       .sort((a, b) => b.s - a.s)
       .map((x) => x.e);
-  }, [query]);
+  }, [query, entries]);
 
   const close = useCallback(() => {
     setOpen(false);

@@ -4,6 +4,9 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
+import { FeedbackWidget } from "./components/feedback-widget";
+import { ChromeGate } from "./components/chrome-gate";
+import { fetchSiteContent } from "./lib/site-content";
 
 const display = Space_Grotesk({
   variable: "--font-display",
@@ -39,9 +42,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const content = await fetchSiteContent();
   return (
     <html
       lang="en"
@@ -58,11 +62,18 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <ChromeGate>
+          <SiteHeader nav={content.nav} general={content.general} />
+        </ChromeGate>
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <ChromeGate>
+          <SiteFooter footer={content.footer} general={content.general} />
+        </ChromeGate>
+        <ChromeGate>
+          <FeedbackWidget />
+        </ChromeGate>
       </body>
     </html>
   );

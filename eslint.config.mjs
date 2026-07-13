@@ -15,10 +15,11 @@ const eslintConfig = defineConfig([
   ]),
   {
     rules: {
-      // Our effects read browser-only APIs (matchMedia, scroll position,
-      // localStorage theme) after mount to stay SSR-safe — a single setState on
-      // mount is intended here, so keep this rule as a hint, not a build error.
-      "react-hooks/set-state-in-effect": "warn",
+      // Several effects read browser-only state on mount (matchMedia, scroll
+      // position, localStorage theme, search params, modal-open resets) to stay
+      // SSR-safe. A single setState in those effects is intentional and correct;
+      // this rule flags the whole pattern as a false positive, so it is off.
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ]);

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLink } from "../components/ui";
-import { DOCS_NAV } from "./nav";
+import { fetchDocsNav } from "../lib/docs";
+import { fetchSiteContent } from "../lib/site-content";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -9,34 +12,39 @@ export const metadata: Metadata = {
     "Learn JDesk from scratch: a Java 25 core, a web frontend, and the operating system's own WebView.",
 };
 
-const CARDS = [
-  {
-    tone: "arc" as const,
+// Curated kicker + blurb per group; links come from the database.
+const GROUP_META: Record<
+  string,
+  { kicker: string; tone: "arc" | "ember"; body: string }
+> = {
+  "Getting started": {
     kicker: "Start here",
-    title: "Getting started",
+    tone: "arc",
     body: "Understand the model, install the toolchain, and build a working app that calls Java from the web UI.",
   },
-  {
-    tone: "ember" as const,
+  Guides: {
     kicker: "Build",
-    title: "Guides",
-    body: "Task-oriented how-tos for defining commands, emitting events, granting capabilities, and driving the CLI.",
+    tone: "ember",
+    body: "Task-oriented how-tos for commands, events, capabilities, packaging, and everything you do while building.",
   },
-  {
-    tone: "arc" as const,
+  Concepts: {
     kicker: "Understand",
-    title: "Concepts",
+    tone: "arc",
     body: "How the pieces fit: the architecture, the asynchronous typed IPC, and the Java-enforced security model.",
   },
-  {
-    tone: "ember" as const,
+  Reference: {
     kicker: "Look up",
-    title: "Reference",
-    body: "Exact, complete descriptions of the public Java API surface and the command / event vocabulary.",
+    tone: "ember",
+    body: "Exact, complete descriptions of the public API surface and the command / event vocabulary.",
   },
-];
+};
 
-export default function DocsHome() {
+export default async function DocsHome() {
+  const [{ groups }, { general }] = await Promise.all([
+    fetchDocsNav(),
+    fetchSiteContent(),
+  ]);
+
   return (
     <div className="py-8 lg:py-10">
       {/* gradient hero card */}
@@ -50,10 +58,10 @@ export default function DocsHome() {
         />
         <div className="pointer-events-none absolute inset-0 -z-10 signal-field opacity-40" />
         <div className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-fg-muted">
-          JDesk documentation
+          {general.siteName} documentation
         </div>
         <h1 className="mt-4 max-w-2xl font-display text-4xl font-semibold tracking-[-0.03em] text-fg sm:text-5xl">
-          Everything you need to build with JDesk.
+          Everything you need to build with {general.siteName}.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-fg-muted">
           A framework for desktop apps with a Java&nbsp;25 core and a web
@@ -72,44 +80,53 @@ export default function DocsHome() {
             href="/docs/installation"
             className="inline-flex items-center gap-2 rounded-xl border border-line-strong bg-surface/60 px-5 py-3 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
           >
-            Install JDesk
+            Install {general.siteName}
           </Link>
         </div>
       </div>
 
-      {/* section cards */}
+      {/* section cards — one per group, from the database */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {CARDS.map((card) => {
-          const links = DOCS_NAV.find((group) => group.title === card.title)?.items ?? [];
+        {groups.map((group) => {
+          const meta =
+            GROUP_META[group.title] ??
+            ({ kicker: "Docs", tone: "arc", body: "" } as const);
           return (
-          <div key={card.title} className="card flex flex-col p-6">
-            <div
-              className={`font-mono text-xs font-medium uppercase tracking-[0.16em] ${
-                card.tone === "ember" ? "text-ember" : "text-arc-strong"
-              }`}
-            >
-              {card.kicker}
+            <div key={group.title} className="card flex flex-col p-6">
+              <div
+                className={`font-mono text-xs font-medium uppercase tracking-[0.16em] ${
+                  meta.tone === "ember" ? "text-ember" : "text-arc-strong"
+                }`}
+              >
+                {meta.kicker}
+              </div>
+              <h2 className="mt-2 font-display text-xl font-semibold text-fg">
+                {group.title}
+              </h2>
+              {meta.body && (
+                <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+                  {meta.body}
+                </p>
+              )}
+              <ul className="mt-4 space-y-1.5">
+                {group.items.slice(0, 5).map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition-colors hover:text-fg"
+                    >
+                      <span className="text-fg-faint">→</span>
+                      {item.title}
+                    </Link>
+                  </li>
+                ))}
+                {group.items.length > 5 && (
+                  <li className="pl-4 text-xs text-fg-faint">
+                    +{group.items.length - 5} more
+                  </li>
+                )}
+              </ul>
             </div>
-            <h2 className="mt-2 font-display text-xl font-semibold text-fg">
-              {card.title}
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-fg-muted">
-              {card.body}
-            </p>
-            <ul className="mt-4 space-y-1.5">
-              {links.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition-colors hover:text-fg"
-                  >
-                    <span className="text-fg-faint">→</span>
-                    {l.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
           );
         })}
       </div>
@@ -120,10 +137,10 @@ export default function DocsHome() {
             Prefer to read the source?
           </div>
           <p className="mt-1 text-sm text-fg-muted">
-            JDesk is Apache-2.0 and developed in the open.
+            {general.siteName} is Apache-2.0 and developed in the open.
           </p>
         </div>
-        <ArrowLink href="https://github.com/tuanworlddev/jdesk" external>
+        <ArrowLink href={general.githubUrl} external>
           GitHub
         </ArrowLink>
       </div>
