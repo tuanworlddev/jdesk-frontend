@@ -25,13 +25,39 @@ DEB are built in the CI package jobs. See
 packaging and signing for the current
 per-platform status.
 
+## Application name and the macOS menu bar
+
+The name a user sees comes from `jdesk.applicationName`:
+
+```kotlin
+jdesk {
+    applicationId.set("dev.example.dragon7")
+    applicationName.set("Dragon 7")   // optional; defaults to the last applicationId segment
+}
+```
+
+`jdeskPackage` passes it to `jpackage --name`, which becomes the app's **`CFBundleName`** — the
+**bold application name** in the macOS menu bar (just right of the  menu). The task also embeds it
+as a `-Djdesk.applicationName` launch option so the runtime's **`Quit <Name>`** item matches the bold
+title exactly. Set it once and both agree; leave it unset and both derive from the last
+`applicationId` segment (e.g. `dragon7`).
+
+> **Only a packaged app can change the bold menu-bar name.** On a bundle-less dev launch
+> (`./gradlew run`) macOS forces that title to the executable name — it shows `java`, and no runtime
+> call can override it. It reads correctly the moment the app is packaged, because `CFBundleName` is
+> then present. This is purely cosmetic — permissions and identity read the code signature and bundle
+> id, never the menu-bar text.
+
 ## Installers are UNSIGNED without an identity
 
 `jdeskInstaller` produces a **real but UNSIGNED** installer unless a signing identity is
 configured for the current OS. Unsigned packages are fine for development and internal
 verification, but they are labeled `UNSIGNED` and **do not satisfy a signed-release gate**.
 Signing itself is delegated to the OS toolchains (`signtool`, `codesign` + `notarytool`,
-`dpkg-sig`/`rpmsign`); the plugin only invokes them from the values you set.
+`dpkg-sig`/`rpmsign`); the plugin only invokes them from the values you set. On macOS, when both
+`macSigningIdentity` and `macNotarizationProfile` are set, `jdeskInstaller` code-signs the image
+(Hardened Runtime + secure timestamp), then **automatically submits the installer to Apple
+notarization and staples the ticket** so it launches without a Gatekeeper prompt.
 
 ## Configure the signing hooks
 

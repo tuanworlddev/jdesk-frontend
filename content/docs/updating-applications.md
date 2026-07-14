@@ -38,6 +38,24 @@ Content-Length, credentials in package URLs, non-HTTPS transport, invalid signat
 unknown manifest fields and unsupported schema versions. Temporary downloads are deleted
 after verification and staging.
 
+## Phased rollout
+
+A manifest carries an optional `rolloutPercentage` (0–100, default 100 = full rollout). Pass a
+stable install id when constructing `UpdateManager` — `InstallIdentity.loadOrCreate(configDir
+.resolve("install-id"))` returns an anonymous, owner-only per-install UUID — and a newer release
+only stages once that install's deterministic bucket is within the manifest's reach. Buckets are
+per release, so raising the percentage over time only ever admits more installs, never fewer. An
+install not yet in the rollout returns `UpdateResult.Status.HELD_BACK` instead of `STAGED`; leave
+the install id null to disable rollout gating. The package is SHA-256- and signature-verified
+regardless — the percentage only paces which installs stage an already-trusted release.
+
+## Generating manifests
+
+Publish the release side with `SignedManifestWriter.write(...)`: it hashes and Ed25519-signs the
+package, signs the manifest payload (separate keys let the package key stay offline), and returns
+the JSON a CI job or hosted endpoint serves. It is the exact counterpart of
+`SignedManifestVerifier`, so a written manifest always verifies under the matching public key.
+
 ## Managed properties
 
 | Property | Default |
@@ -57,7 +75,8 @@ and CA setup in a managed-device test environment.
 
 ## Manifest fields
 
-Schema version 1 signs every field except manifestSignature: version, channel, packageUri,
+Schema version 1 signs every field except manifestSignature (including the rollout percentage):
+version, channel, packageUri,
 exact size, SHA-256, raw-package Ed25519 signature, publication time and optional minimum
 current version. Use UpdateManifest.signingPayload() as the exact bytes for generating or
 verifying the manifest signature. Do not invent a JSON canonicalization scheme.
