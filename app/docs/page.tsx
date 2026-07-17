@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Documentation",
   description:
     "Learn JDesk from scratch: a Java 25 core, a web frontend, and the operating system's own WebView.",
+  alternates: { canonical: "/docs" },
 };
 
 // Curated kicker + blurb per group; links come from the database.

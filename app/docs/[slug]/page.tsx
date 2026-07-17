@@ -22,7 +22,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const doc = await fetchDoc(slug);
   if (!doc) return {};
-  return { title: doc.title, description: doc.description };
+  return {
+    title: doc.title,
+    description: doc.description,
+    alternates: { canonical: `/docs/${doc.slug}` },
+  };
 }
 
 function plainText(node: ReactNode): string {

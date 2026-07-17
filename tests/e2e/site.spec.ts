@@ -25,7 +25,7 @@ test("every documentation navigation route resolves", async ({ page, request }) 
     .locator("nav a[href^='/docs/']")
     .evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute("href")))].filter(Boolean));
 
-  expect(hrefs).toHaveLength(34);
+  expect(hrefs).toHaveLength(35);
   for (const href of hrefs) {
     const response = await request.get(href!);
     expect(response.status(), href!).toBe(200);

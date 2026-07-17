@@ -28,6 +28,7 @@ export const STANDALONE_DOCS: StandaloneDoc[] = [
   { slug: "typescript-client", title: "TypeScript client", description: "Reference for invoke, events, cancellation, reset, and binary streams in @jdesk/client.", group: "Reference", keywords: "typescript client invoke on event abort timeout stream reset" },
   { slug: "plugins", title: "Plugins", description: "Extend an app with signed, integrity-checked, capability-gated third-party plugins.", group: "Guides", keywords: "plugin manifest signed integrity capability deny-by-default ed25519 authorization" },
   { slug: "non-modular-libraries", title: "Using non-modular libraries", description: "Use automatic-module Java libraries (like LSP4J) in a JPMS app for both dev and packaging.", group: "Guides", keywords: "jpms automatic module non-modular lsp4j extra-java-module-info jlink jpackage sidecar" },
+  { slug: "webview-sessions", title: "WebView sessions & cookies", description: "Isolate browser sessions and manage cookies, cache, local storage, and user agents across native WebViews.", group: "Guides", keywords: "webview session private persistent cookie cache local storage user agent profile webview2 wkwebview webkitgtk" },
 ];
 
 export const STANDALONE_DOC_BY_SLUG = new Map(

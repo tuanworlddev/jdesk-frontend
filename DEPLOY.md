@@ -81,8 +81,10 @@ certbot --nginx -d jdesk.dev -d www.jdesk.dev
    - `SSH_HOST` — `103.75.183.164`
    - `SSH_USER` — `root` (better: a dedicated deploy user)
 4. Push to `main` → the workflow SSHes in and runs
-   `deploy.sh` (pulls both repos, rebuilds, `prisma migrate deploy`, reloads
-   PM2). It **never re-seeds**, so admin edits are preserved.
+   `deploy.sh` (pulls both repos, rebuilds, runs `prisma migrate deploy`,
+   imports only newly added source-controlled docs, and reloads PM2). It
+   **never re-seeds or overwrites existing CMS rows**, so admin edits are
+   preserved.
 
 ## 5. Manual redeploy
 
@@ -99,6 +101,8 @@ bash /var/www/jdesk/frontend/deploy/deploy.sh
   reaches the backend via `API_INTERNAL_URL=http://127.0.0.1:3001/api` (set in
   the PM2 config). Backend secrets live in `backend/.env`.
 - **Database.** SQLite `prod.db` lives in `backend/`. Back it up regularly
-  (`cp prod.db backups/…`). It is gitignored.
+  (`cp prod.db backups/…`). It is gitignored. Deploys run
+  `npm run import:standalone -- --create-only`: new official docs are created,
+  while existing CMS content is left untouched.
 - **Security.** Change the seeded admin password immediately, and set a strong
   `JWT_SECRET`.
