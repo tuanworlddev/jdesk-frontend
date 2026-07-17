@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { DocArticle } from "../_components/doc-article";
 import { fetchDoc, fetchDocsNav, siblingsOf } from "../../lib/docs";
+import { stripLeadingDocumentTitle } from "../../lib/markdown";
 
 // Docs render from the CMS database on each request, so admin edits go live.
 export const dynamic = "force-dynamic";
@@ -75,13 +76,14 @@ export default async function DocPage({
   if (!doc) notFound();
 
   const { prev, next } = siblingsOf(flat, `/docs/${doc.slug}`);
+  const content = stripLeadingDocumentTitle(doc.content, doc.title);
 
   return (
     <DocArticle
       eyebrow={doc.eyebrow || doc.group}
       title={doc.title}
       description={doc.description}
-      toc={tocFrom(doc.content)}
+      toc={tocFrom(content)}
       prev={prev}
       next={next}
     >
@@ -124,7 +126,7 @@ export default async function DocPage({
           ),
         }}
       >
-        {doc.content}
+        {content}
       </ReactMarkdown>
     </DocArticle>
   );
