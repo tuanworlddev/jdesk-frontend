@@ -32,6 +32,19 @@ test("every documentation navigation route resolves", async ({ page, request }) 
   }
 });
 
+test("documentation has one CMS-backed primary heading", async ({ page }) => {
+  await page.goto("/docs/webview-sessions");
+
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "WebView sessions & cookies",
+    }),
+  ).toHaveCount(1);
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.getByRole("heading", { level: 2, name: "Details" })).toBeVisible();
+});
+
 test("search dialog manages focus, keyboard navigation, and scroll", async ({ page }) => {
   await page.goto("/");
   const trigger = page.getByRole("button", { name: "Search documentation" });

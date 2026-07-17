@@ -41,6 +41,7 @@ const slugs = [
 ];
 
 function title(slug) {
+  if (slug === "webview-sessions") return "WebView sessions & cookies";
   return slug
     .split("-")
     .map((part) => part[0].toUpperCase() + part.slice(1))
@@ -63,7 +64,7 @@ const documents = slugs.map((slug, index) => ({
   group: group(index),
   order: index,
   published: true,
-  content: `## ${title(slug)}\n\nThis fixture verifies the server-rendered documentation route.`,
+  content: `# ${title(slug)}\n\n## Details\n\nThis fixture verifies the server-rendered documentation route.`,
 }));
 
 function json(response, status, value) {
