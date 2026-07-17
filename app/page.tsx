@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BridgeHero } from "./components/bridge-hero";
 import { CodeBlock } from "./components/code-block";
 import { Comparison } from "./components/comparison";
@@ -9,6 +10,10 @@ import {
   SectionEyebrow,
 } from "./components/ui";
 import { fetchSiteContent } from "./lib/site-content";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 function PillarIcon({ name }: { name: string }) {
   const p = { fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };

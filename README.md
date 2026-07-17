@@ -11,12 +11,17 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-## Build
+## Build and run
 
 ```bash
-npm run build    # static production build (all routes prerendered)
-npm run start    # serve the production build
+npm run build    # compile the Next.js SSR application
+npm run start    # serve it on http://localhost:3000
 ```
+
+Documentation and homepage content are read from the sibling NestJS CMS at
+request time. Set `API_INTERNAL_URL` for server-side access and
+`NEXT_PUBLIC_API_URL` for browser requests; both default to the local API on
+port 3001 during development.
 
 ## Structure
 
@@ -34,7 +39,7 @@ app/
     page.tsx              # documentation hub
     <topic>/page.tsx      # hand-crafted core pages
     [slug]/page.tsx       # standalone Markdown-backed reference pages
-content/docs/             # documentation owned and shipped by this repository
+content/docs/             # source-controlled docs imported into the CMS
 ```
 
 ## Design

@@ -18,6 +18,13 @@ echo "==> Frontend"
 cd "$ROOT/frontend"
 git pull --ff-only || echo "  (skip git pull)"
 npm ci
+
+# Publish only newly added source-controlled docs. Existing rows are left
+# untouched so edits made through the CMS remain authoritative.
+cd "$ROOT/backend"
+npm run import:standalone -- --create-only
+
+cd "$ROOT/frontend"
 # NEXT_PUBLIC_* is inlined at build time; keep it same-origin for production.
 NEXT_PUBLIC_API_URL="/api" npm run build
 

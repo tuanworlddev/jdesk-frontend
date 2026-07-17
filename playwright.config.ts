@@ -12,10 +12,22 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
   ],
-  webServer: {
-    command: "npm run preview -- 4173",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
-    timeout: 30_000,
-  },
+  webServer: [
+    {
+      command: "node tests/fixtures/cms-server.mjs",
+      url: "http://127.0.0.1:3001/api/documents",
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+    },
+    {
+      command: "npm run preview -- 4173",
+      url: "http://127.0.0.1:4173",
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+      env: {
+        ...process.env,
+        API_INTERNAL_URL: "http://127.0.0.1:3001/api",
+      },
+    },
+  ],
 });
