@@ -84,7 +84,9 @@ certbot --nginx -d jdesk.dev -d www.jdesk.dev
    `deploy.sh` (pulls both repos, rebuilds, runs `prisma migrate deploy`,
    imports only newly added source-controlled docs, and reloads PM2). It
    **never re-seeds or overwrites existing CMS rows**, so admin edits are
-   preserved.
+   preserved. The deploy fails if either checkout is not on `main`, contains
+   local changes, or does not match `origin/main`; it also health-checks both
+   Node processes after the PM2 reload.
 
 ## 5. Manual redeploy
 
@@ -106,3 +108,7 @@ bash /var/www/jdesk/frontend/deploy/deploy.sh
   while existing CMS content is left untouched.
 - **Security.** Change the seeded admin password immediately, and set a strong
   `JWT_SECRET`.
+- **Clean checkouts.** Do not edit tracked files directly in
+  `/var/www/jdesk/{frontend,backend}`. Commit changes through GitHub; a dirty
+  checkout intentionally blocks deployment instead of silently building stale
+  code.
