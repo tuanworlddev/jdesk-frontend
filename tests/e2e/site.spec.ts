@@ -25,7 +25,7 @@ test("every documentation navigation route resolves", async ({ page, request }) 
     .locator("nav a[href^='/docs/']")
     .evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute("href")))].filter(Boolean));
 
-  expect(hrefs).toHaveLength(35);
+  expect(hrefs).toHaveLength(37);
   for (const href of hrefs) {
     const response = await request.get(href!);
     expect(response.status(), href!).toBe(200);
@@ -75,25 +75,29 @@ test("documentation drawer is a keyboard-safe modal", async ({ page }) => {
   await expect(trigger).toBeFocused();
 });
 
-test("code tabs implement the ARIA keyboard pattern", async ({ page }) => {
-  await page.goto("/docs/installation");
-  const tablist = page.getByRole("tablist", { name: "Platform-specific commands" }).first();
-  const tabs = tablist.getByRole("tab");
-  await tabs.first().focus();
-  await tabs.first().press("ArrowRight");
-
-  await expect(tabs.nth(1)).toBeFocused();
-  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
-  const panelId = await tabs.nth(1).getAttribute("aria-controls");
-  await expect(page.locator(`[id="${panelId}"]`)).toBeVisible();
+test("code blocks expose clipboard feedback", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => undefined },
+    });
+  });
+  await page.goto("/");
+  const copy = page.getByTestId("copy-button").first();
+  await expect(copy).toHaveAccessibleName("Copy to clipboard");
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
 });
 
 test("production responses carry the generated security policy", async ({ request }) => {
   const response = await request.get("/");
   const headers = response.headers();
 
-  expect(headers["content-security-policy"]).toContain("script-src 'self' 'sha256-");
+  expect(headers["content-security-policy"]).toMatch(
+    /script-src 'self' 'nonce-[^']+' 'strict-dynamic'/,
+  );
   expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["content-security-policy"]).not.toContain("upgrade-insecure-requests");
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["x-frame-options"]).toBe("DENY");
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");

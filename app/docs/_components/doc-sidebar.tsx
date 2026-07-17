@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useModalDialog } from "../../hooks/use-modal-dialog";
 
 export type NavLink = { title: string; href: string };
 export type NavGroup = { title: string; items: NavLink[] };
@@ -54,6 +55,19 @@ function NavList({
 
 export function DocSidebar({ groups }: { groups: NavGroup[] }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+
+  useModalDialog({
+    open,
+    onClose: close,
+    dialogRef,
+    triggerRef,
+    initialFocusRef: closeRef,
+  });
+
   return (
     <>
       {/* Desktop rail */}
@@ -65,8 +79,12 @@ export function DocSidebar({ groups }: { groups: NavGroup[] }) {
 
       {/* Mobile trigger */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls="docs-mobile-drawer"
         className="mb-6 inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm font-medium text-fg-muted lg:hidden"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -80,17 +98,29 @@ export function DocSidebar({ groups }: { groups: NavGroup[] }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
             className="absolute inset-0 bg-black/50"
-            onClick={() => setOpen(false)}
+            onClick={close}
             aria-hidden
           />
-          <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-line bg-bg p-5">
+          <div
+            ref={dialogRef}
+            id="docs-mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="docs-mobile-drawer-title"
+            tabIndex={-1}
+            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-line bg-bg p-5"
+          >
             <div className="mb-6 flex items-center justify-between">
-              <span className="font-display font-semibold text-fg">
+              <span
+                id="docs-mobile-drawer-title"
+                className="font-display font-semibold text-fg"
+              >
                 Documentation
               </span>
               <button
+                ref={closeRef}
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={close}
                 aria-label="Close"
                 className="grid h-8 w-8 place-items-center rounded-lg border border-line text-fg-muted"
               >
@@ -99,7 +129,7 @@ export function DocSidebar({ groups }: { groups: NavGroup[] }) {
                 </svg>
               </button>
             </div>
-            <NavList groups={groups} onNavigate={() => setOpen(false)} />
+            <NavList groups={groups} onNavigate={close} />
           </div>
         </div>
       )}

@@ -19,6 +19,7 @@ export function CopyButton({ text, label }: { text: string; label?: string }) {
     <button
       type="button"
       onClick={copy}
+      data-testid="copy-button"
       aria-label={copied ? "Copied" : label ?? "Copy to clipboard"}
       className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-medium text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
     >
